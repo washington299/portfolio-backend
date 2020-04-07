@@ -1,4 +1,5 @@
 import { GetEmailController } from './get-email';
+import { MissingParamError } from '../errors/missing-param-error';
 
 describe('Get Email from Client', () => {
   test('Should return 400 if no name is provided', () => {
@@ -11,6 +12,7 @@ describe('Get Email from Client', () => {
     };
     const httpResponse = sut.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new MissingParamError('name'));
   });
 
   test('Should return 400 if no email is provided', () => {
@@ -23,6 +25,7 @@ describe('Get Email from Client', () => {
     };
     const httpResponse = sut.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new MissingParamError('email'));
   });
 
   test('Should return 400 if no message is provided', () => {
@@ -35,5 +38,6 @@ describe('Get Email from Client', () => {
     };
     const httpResponse = sut.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new MissingParamError('message'));
   });
 });
