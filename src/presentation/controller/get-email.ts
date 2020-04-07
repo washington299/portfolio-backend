@@ -3,7 +3,7 @@ import { HttpRequest, HttpResponse } from '../protocols/http';
 
 export class GetEmailController {
   handle(httpRequest: HttpRequest): HttpResponse {
-    if (!httpRequest.body.name) {
+    if (!httpRequest.body.name || !httpRequest.body.email) {
       return {
         statusCode: 400,
         body: {},
