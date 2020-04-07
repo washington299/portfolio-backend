@@ -24,4 +24,16 @@ describe('Get Email from Client', () => {
     const httpResponse = sut.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
   });
+
+  test('Should return 400 if no message is provided', () => {
+    const sut = new GetEmailController();
+    const httpRequest = {
+      body: {
+        name: 'valid_name',
+        email: 'valid_email',
+      },
+    };
+    const httpResponse = sut.handle(httpRequest);
+    expect(httpResponse.statusCode).toBe(400);
+  });
 });
