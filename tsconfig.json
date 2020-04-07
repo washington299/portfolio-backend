@@ -1,11 +1,10 @@
 {
   "compilerOptions": {
     "allowJs": true,
-    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "module": "commonjs",
     "outDir": "./dist",
     "strict": true,
     "target": "ES2019",
   },
-  "include": ["src/**"],
 }
