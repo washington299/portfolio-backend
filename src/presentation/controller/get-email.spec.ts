@@ -1,5 +1,5 @@
 import { GetEmailController } from './get-email';
-import { MissingParamError, InvalidParamError } from '../errors';
+import { MissingParamError, InvalidParamError, ServerError } from '../errors';
 import { EmailValidator } from '../protocols/email-validator';
 
 const makeEmailValidator = (): EmailValidator => {
@@ -77,5 +77,22 @@ describe('Get Email from Client', () => {
     const httpResponse = sut.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new InvalidParamError('email'));
+  });
+
+  test('Should throw if EmailValidator throws', () => {
+    const { sut, emailValidatorStub } = makeSut();
+    jest.spyOn(emailValidatorStub, 'isValid').mockImplementation(() => {
+      throw new Error();
+    });
+    const httpRequest = {
+      body: {
+        name: 'valid_name',
+        email: 'valid_email@mail.com',
+        message: 'valid_message',
+      },
+    };
+    const httpResponse = sut.handle(httpRequest);
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
   });
 });
