@@ -5,7 +5,6 @@
         "jest": true
     },
     "extends": [
-        "plugin:@typescript-eslint/recommended",
         "airbnb-base"
     ],
     "globals": {
@@ -32,6 +31,12 @@
         "import/prefer-default-export": "off",
         "import/extensions": "off",
         "@typescript-eslint/no-explicit-any": "off",
-        "no-restricted-syntax": "off"
+        "@typescript-eslint/explicit-function-return-type": ["error"],
+        "no-unused-vars": "off",
+        "no-restricted-syntax": "off",
+        "no-console": "off",
+        "prefer-object-spread": "off",
+        "lines-between-class-members": "off",
+        "no-underscore-dangle": "off"
     }
 }
