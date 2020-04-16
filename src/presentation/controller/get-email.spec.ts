@@ -1,5 +1,7 @@
 import { GetEmailController } from './get-email';
-import { MissingParamError, InvalidParamError, ServerError } from '../errors';
+import {
+  MissingParamError, InvalidParamError, ServerError, Success,
+} from '../response-handler';
 import { EmailValidator } from '../protocols/email-validator';
 
 const makeEmailValidator = (): EmailValidator => {
@@ -94,5 +96,19 @@ describe('Get Email from Client', () => {
     const httpResponse = sut.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError());
+  });
+
+  test('Should return 200 if correct params are provided', () => {
+    const { sut } = makeSut();
+    const httpRequest = {
+      body: {
+        name: 'valid_name',
+        email: 'valid_email@mail.com',
+        message: 'valid_message',
+      },
+    };
+    const httpResponse = sut.handle(httpRequest);
+    expect(httpResponse.statusCode).toBe(200);
+    expect(httpResponse.body).toEqual(new Success());
   });
 });
