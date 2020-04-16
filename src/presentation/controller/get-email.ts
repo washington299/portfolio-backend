@@ -1,7 +1,7 @@
 /* eslint-disable consistent-return */
 import { HttpRequest, HttpResponse } from '../protocols/http';
-import { badRequest, serverError } from '../helpers/http-helpers';
-import { MissingParamError, InvalidParamError, ServerError } from '../errors';
+import { badRequest, serverError, ok } from '../helpers/http-helpers';
+import { MissingParamError, InvalidParamError, ServerError } from '../response-handler';
 import { EmailValidator } from '../protocols/email-validator';
 
 export class GetEmailController {
@@ -27,7 +27,7 @@ export class GetEmailController {
         return badRequest(new InvalidParamError('email'));
       }
 
-      return { statusCode: 0, body: {} };
+      return ok();
     } catch (error) {
       return serverError();
     }
