@@ -1,8 +1,8 @@
 /* eslint-disable consistent-return */
-import { HttpRequest, HttpResponse } from '../protocols/http';
-import { badRequest, serverError, ok } from '../helpers/http-helpers';
-import { MissingParamError, InvalidParamError, ServerError } from '../response-handler';
-import { EmailValidator } from '../protocols/email-validator';
+import { HttpRequest, HttpResponse } from '../../protocols/http';
+import { badRequest, serverError, ok } from '../../helpers/http-helpers';
+import { MissingParamError, InvalidParamError } from '../../response-handler';
+import { EmailValidator } from '../../protocols/email-validator';
 
 export class GetEmailController {
   private readonly emailValidator: EmailValidator;

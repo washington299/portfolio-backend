@@ -1,8 +1,8 @@
 import { GetEmailController } from './get-email';
 import {
   MissingParamError, InvalidParamError, ServerError, Success,
-} from '../response-handler';
-import { EmailValidator } from '../protocols/email-validator';
+} from '../../response-handler';
+import { EmailValidator } from '../../protocols/email-validator';
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
