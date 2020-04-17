@@ -81,6 +81,20 @@ describe('Get Email from Client', () => {
     expect(httpResponse.body).toEqual(new InvalidParamError('email'));
   });
 
+  test('Should call EmailValidator with correct email', () => {
+    const { sut, emailValidatorStub } = makeSut();
+    const emailSpy = jest.spyOn(emailValidatorStub, 'isValid');
+    const httpRequest = {
+      body: {
+        name: 'valid_name',
+        email: 'valid_email@mail.com',
+        message: 'valid_message',
+      },
+    };
+    sut.handle(httpRequest);
+    expect(emailSpy).toHaveBeenCalledWith('valid_email@mail.com');
+  });
+
   test('Should throw if EmailValidator throws', () => {
     const { sut, emailValidatorStub } = makeSut();
     jest.spyOn(emailValidatorStub, 'isValid').mockImplementation(() => {
