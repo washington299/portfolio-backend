@@ -1,6 +1,6 @@
 export class ServerError extends Error {
   constructor() {
-    super('Invalid server error');
+    super('Internal server error, send a message to this email: washingtoncampos9@gmail.com');
     this.name = 'ServerError';
   }
 }
