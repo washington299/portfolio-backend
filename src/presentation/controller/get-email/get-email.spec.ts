@@ -139,4 +139,21 @@ describe('Get Email from Client', () => {
     expect(httpResponse.statusCode).toBe(200);
     expect(httpResponse.body).toEqual(new Success());
   });
+
+  test('Should return 500 if EmailSending throws', () => {
+    const { sut, emailSendingStub } = makeSut();
+    jest.spyOn(emailSendingStub, 'send').mockImplementation(() => {
+      throw Error();
+    });
+    const httpRequest = {
+      body: {
+        email: 'any_email@mail.com',
+        subject: 'any_subject',
+        message: 'any_message',
+      },
+    };
+    const httpResponse = sut.handle(httpRequest);
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
+  });
 });
