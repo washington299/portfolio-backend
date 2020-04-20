@@ -29,7 +29,9 @@ export class GetEmailController {
         return badRequest(new InvalidParamError('email'));
       }
 
-      const emailSent = this.emailSending.send(email, subject, message);
+      const emailSent = this.emailSending.send({
+        email, subject, message,
+      });
       if (!emailSent) {
         return serverError();
       }

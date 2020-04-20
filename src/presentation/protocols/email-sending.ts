@@ -1,3 +1,9 @@
+export interface EmailSendingParams {
+  email: string,
+  subject: string,
+  message: string,
+}
+
 export interface EmailSending {
-  send(email: string, subject: string, message: string): Promise<boolean>;
+  send(message: EmailSendingParams): Promise<EmailSendingParams>;
 }
