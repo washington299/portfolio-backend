@@ -4,7 +4,7 @@ import {
   MissingParamError, InvalidParamError, ServerError, Success,
 } from '../../response-handler';
 import { EmailValidator } from '../../protocols/email-validator';
-import { EmailSending } from '../../protocols/email-sending';
+import { EmailSending, EmailSendingParams } from '../../protocols/email-sending';
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
@@ -18,8 +18,12 @@ const makeEmailValidator = (): EmailValidator => {
 
 const makeEmailSending = (): EmailSending => {
   class EmailSendingStub implements EmailSending {
-    async send(email: string, subject: string, message: string): Promise<boolean> {
-      return true;
+    async send(message: EmailSendingParams): Promise<EmailSendingParams> {
+      return new Promise((resolve, reject) => resolve({
+        email: 'any_email@mail.com',
+        subject: 'any_subject',
+        message: 'any_message',
+      }));
     }
   }
 
@@ -126,20 +130,6 @@ describe('Get Email from Client', () => {
     expect(httpResponse.body).toEqual(new ServerError());
   });
 
-  test('Should return 200 if correct params are provided', () => {
-    const { sut } = makeSut();
-    const httpRequest = {
-      body: {
-        subject: 'any_subject',
-        email: 'any_email@mail.com',
-        message: 'any_message',
-      },
-    };
-    const httpResponse = sut.handle(httpRequest);
-    expect(httpResponse.statusCode).toBe(200);
-    expect(httpResponse.body).toEqual(new Success());
-  });
-
   test('Should return 500 if EmailSending throws', () => {
     const { sut, emailSendingStub } = makeSut();
     jest.spyOn(emailSendingStub, 'send').mockImplementation(() => {
@@ -155,5 +145,37 @@ describe('Get Email from Client', () => {
     const httpResponse = sut.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError());
+  });
+
+  test('Should call EmailSending with correct params', () => {
+    const { sut, emailSendingStub } = makeSut();
+    const emailSendSpy = jest.spyOn(emailSendingStub, 'send');
+    const httpRequest = {
+      body: {
+        email: 'any_email@mail.com',
+        subject: 'any_subject',
+        message: 'any_message',
+      },
+    };
+    sut.handle(httpRequest);
+    expect(emailSendSpy).toHaveBeenCalledWith({
+      email: 'any_email@mail.com',
+      subject: 'any_subject',
+      message: 'any_message',
+    });
+  });
+
+  test('Should return 200 if correct params are provided', () => {
+    const { sut } = makeSut();
+    const httpRequest = {
+      body: {
+        subject: 'any_subject',
+        email: 'any_email@mail.com',
+        message: 'any_message',
+      },
+    };
+    const httpResponse = sut.handle(httpRequest);
+    expect(httpResponse.statusCode).toBe(200);
+    expect(httpResponse.body).toEqual(new Success());
   });
 });
