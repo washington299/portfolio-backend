@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { EmailSenderParams, EmailSender } from '../protocols/email-sender';
+import { EmailSenderParams, EmailSender } from '../protocols';
 
 export class EmailSenderAdapter implements EmailSender {
   async send(message: EmailSenderParams): Promise<boolean> {
