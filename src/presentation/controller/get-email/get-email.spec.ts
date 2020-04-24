@@ -18,7 +18,9 @@ const makeEmailValidator = (): EmailValidator => {
 
 const makeEmailSender = (): EmailSender => {
   class EmailSenderStub implements EmailSender {
-    async send(message: EmailSenderParams): Promise<void> {}
+    async send(message: EmailSenderParams): Promise<boolean> {
+      return true;
+    }
   }
 
   return new EmailSenderStub();
