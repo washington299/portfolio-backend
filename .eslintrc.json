@@ -37,6 +37,7 @@
         "no-console": "off",
         "prefer-object-spread": "off",
         "lines-between-class-members": "off",
-        "no-underscore-dangle": "off"
+        "no-underscore-dangle": "off",
+        "no-empty-function": "off"
     }
 }

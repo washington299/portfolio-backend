@@ -4,7 +4,7 @@ import {
   MissingParamError, InvalidParamError, ServerError, Success,
 } from '../../response-handler';
 import { EmailValidator } from '../../protocols/email-validator';
-import { EmailSending, EmailSendingParams } from '../../protocols/email-sending';
+import { EmailSender, EmailSenderParams } from '../../protocols/email-sender';
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
@@ -16,32 +16,26 @@ const makeEmailValidator = (): EmailValidator => {
   return new EmailValidatorStub();
 };
 
-const makeEmailSending = (): EmailSending => {
-  class EmailSendingStub implements EmailSending {
-    async send(message: EmailSendingParams): Promise<EmailSendingParams> {
-      return new Promise((resolve, reject) => resolve({
-        email: 'any_email@mail.com',
-        subject: 'any_subject',
-        message: 'any_message',
-      }));
-    }
+const makeEmailSender = (): EmailSender => {
+  class EmailSenderStub implements EmailSender {
+    async send(message: EmailSenderParams): Promise<void> {}
   }
 
-  return new EmailSendingStub();
+  return new EmailSenderStub();
 };
 
 interface SutTypes {
   sut: GetEmailController;
   emailValidatorStub: EmailValidator;
-  emailSendingStub: EmailSending;
+  emailSenderStub: EmailSender;
 }
 
 const makeSut = (): SutTypes => {
   const emailValidatorStub = makeEmailValidator();
-  const emailSendingStub = makeEmailSending();
-  const sut = new GetEmailController(emailValidatorStub, emailSendingStub);
+  const emailSenderStub = makeEmailSender();
+  const sut = new GetEmailController(emailValidatorStub, emailSenderStub);
 
-  return { sut, emailValidatorStub, emailSendingStub };
+  return { sut, emailValidatorStub, emailSenderStub };
 };
 
 describe('Get Email from Client', () => {
@@ -130,9 +124,9 @@ describe('Get Email from Client', () => {
     expect(httpResponse.body).toEqual(new ServerError());
   });
 
-  test('Should return 500 if EmailSending throws', () => {
-    const { sut, emailSendingStub } = makeSut();
-    jest.spyOn(emailSendingStub, 'send').mockImplementation(() => {
+  test('Should return 500 if EmailSender throws', () => {
+    const { sut, emailSenderStub } = makeSut();
+    jest.spyOn(emailSenderStub, 'send').mockImplementation(() => {
       throw Error();
     });
     const httpRequest = {
@@ -147,9 +141,9 @@ describe('Get Email from Client', () => {
     expect(httpResponse.body).toEqual(new ServerError());
   });
 
-  test('Should call EmailSending with correct params', () => {
-    const { sut, emailSendingStub } = makeSut();
-    const emailSendSpy = jest.spyOn(emailSendingStub, 'send');
+  test('Should call EmailSender with correct params', () => {
+    const { sut, emailSenderStub } = makeSut();
+    const emailSendSpy = jest.spyOn(emailSenderStub, 'send');
     const httpRequest = {
       body: {
         email: 'any_email@mail.com',

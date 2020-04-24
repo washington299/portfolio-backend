@@ -2,15 +2,15 @@ import { HttpRequest, HttpResponse } from '../../protocols/http';
 import { badRequest, serverError, ok } from '../../helpers/http-helpers';
 import { MissingParamError, InvalidParamError } from '../../response-handler';
 import { EmailValidator } from '../../protocols/email-validator';
-import { EmailSending } from '../../protocols/email-sending';
+import { EmailSender } from '../../protocols/email-sender';
 
 export class GetEmailController {
   private readonly emailValidator: EmailValidator;
-  private readonly emailSending: EmailSending;
+  private readonly emailSender: EmailSender;
 
-  constructor(emailValidator: EmailValidator, emailSending: EmailSending) {
+  constructor(emailValidator: EmailValidator, emailSender: EmailSender) {
     this.emailValidator = emailValidator;
-    this.emailSending = emailSending;
+    this.emailSender = emailSender;
   }
 
   handle(httpRequest: HttpRequest): HttpResponse {
@@ -29,7 +29,7 @@ export class GetEmailController {
         return badRequest(new InvalidParamError('email'));
       }
 
-      const emailSent = this.emailSending.send({
+      const emailSent = this.emailSender.send({
         email, subject, message,
       });
       if (!emailSent) {
