@@ -39,5 +39,13 @@
         "lines-between-class-members": "off",
         "no-underscore-dangle": "off",
         "no-empty-function": "off"
-    }
+    },
+    "overrides": [
+        {
+         "files": ["*.test.ts", "*.spec.ts"],
+            "rules": {
+               "max-classes-per-file": "off"   
+            }
+        }
+    ]
 }

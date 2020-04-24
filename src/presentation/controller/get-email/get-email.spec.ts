@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import { GetEmailController } from './get-email';
 import {
   MissingParamError, InvalidParamError, ServerError, Success,
