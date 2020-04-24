@@ -1,10 +1,11 @@
 import { GetEmailController } from './get-email';
 import {
-  MissingParamError, InvalidParamError, ServerError, Success,
+  MissingParamError, InvalidParamError,
 } from '../../response-handler';
 import {
   EmailSender, EmailSenderParams, EmailValidator, HttpRequest,
 } from '../../protocols';
+import { ok, serverError, badRequest } from '../../helpers/http-helpers';
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
@@ -58,8 +59,7 @@ describe('Get Email from Client', () => {
       },
     };
     const httpResponse = sut.handle(httpRequest);
-    expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toEqual(new MissingParamError('email'));
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('email')));
   });
 
   test('Should return 400 if no subject is provided', () => {
@@ -71,8 +71,7 @@ describe('Get Email from Client', () => {
       },
     };
     const httpResponse = sut.handle(httpRequest);
-    expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toEqual(new MissingParamError('subject'));
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('subject')));
   });
 
   test('Should return 400 if no message is provided', () => {
@@ -84,8 +83,7 @@ describe('Get Email from Client', () => {
       },
     };
     const httpResponse = sut.handle(httpRequest);
-    expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toEqual(new MissingParamError('message'));
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('message')));
   });
 
   test('Should return 400 if invalid email is provided', () => {
@@ -99,8 +97,7 @@ describe('Get Email from Client', () => {
       },
     };
     const httpResponse = sut.handle(httpRequest);
-    expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toEqual(new InvalidParamError('email'));
+    expect(httpResponse).toEqual(badRequest(new InvalidParamError('email')));
   });
 
   test('Should call EmailValidator with correct email', () => {
@@ -118,19 +115,17 @@ describe('Get Email from Client', () => {
     });
     const httpRequest = makeFakeRequest();
     const httpResponse = sut.handle(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse).toEqual(serverError());
   });
 
-  test('Should return 500 if EmailSender throws', () => {
+  test('Should throw if EmailSender throws', () => {
     const { sut, emailSenderStub } = makeSut();
     jest.spyOn(emailSenderStub, 'send').mockImplementation(() => {
-      throw Error();
+      throw new Error();
     });
     const httpRequest = makeFakeRequest();
     const httpResponse = sut.handle(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse).toEqual(serverError());
   });
 
   test('Should call EmailSender with correct params', () => {
@@ -149,7 +144,6 @@ describe('Get Email from Client', () => {
     const { sut } = makeSut();
     const httpRequest = makeFakeRequest();
     const httpResponse = sut.handle(httpRequest);
-    expect(httpResponse.statusCode).toBe(200);
-    expect(httpResponse.body).toEqual(new Success());
+    expect(httpResponse).toEqual(ok());
   });
 });
