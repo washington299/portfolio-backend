@@ -2,7 +2,7 @@ import {
   HttpRequest, HttpResponse, EmailValidator, EmailSender, Controller,
 } from '../../protocols';
 import { badRequest, serverError, ok } from '../../helpers/http-helpers';
-import { MissingParamError, InvalidParamError } from '../../response-handler';
+import { MissingParamError, InvalidParamError } from '../../errors';
 
 export class EmailHandlerController implements Controller {
   private readonly emailValidator: EmailValidator;
@@ -36,7 +36,7 @@ export class EmailHandlerController implements Controller {
         return serverError();
       }
 
-      return ok();
+      return ok('Message sent, i will anwser as quick as i can :)');
     } catch (error) {
       return serverError();
     }

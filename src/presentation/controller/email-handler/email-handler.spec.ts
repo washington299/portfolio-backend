@@ -1,7 +1,7 @@
 import { EmailHandlerController } from './email-handler';
 import {
   MissingParamError, InvalidParamError,
-} from '../../response-handler';
+} from '../../errors';
 import {
   EmailSender, EmailSenderParams, EmailValidator, HttpRequest,
 } from '../../protocols';
@@ -158,6 +158,6 @@ describe('Get Email from Client', () => {
     const { sut } = makeSut();
     const httpRequest = makeFakeRequest();
     const httpResponse = await sut.handle(httpRequest);
-    expect(httpResponse).toEqual(ok());
+    expect(httpResponse).toEqual(ok('Message sent, i will anwser as quick as i can :)'));
   });
 });
