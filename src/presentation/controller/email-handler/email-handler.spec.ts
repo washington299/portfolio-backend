@@ -1,4 +1,4 @@
-import { GetEmailController } from './get-email';
+import { EmailHandlerController } from './email-handler';
 import {
   MissingParamError, InvalidParamError,
 } from '../../response-handler';
@@ -36,7 +36,7 @@ const makeEmailSender = (): EmailSender => {
 };
 
 interface SutTypes {
-  sut: GetEmailController;
+  sut: EmailHandlerController;
   emailValidatorStub: EmailValidator;
   emailSenderStub: EmailSender;
 }
@@ -44,7 +44,7 @@ interface SutTypes {
 const makeSut = (): SutTypes => {
   const emailValidatorStub = makeEmailValidator();
   const emailSenderStub = makeEmailSender();
-  const sut = new GetEmailController(emailValidatorStub, emailSenderStub);
+  const sut = new EmailHandlerController(emailValidatorStub, emailSenderStub);
 
   return { sut, emailValidatorStub, emailSenderStub };
 };

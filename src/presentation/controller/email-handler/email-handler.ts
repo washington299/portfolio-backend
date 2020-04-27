@@ -4,7 +4,7 @@ import {
 import { badRequest, serverError, ok } from '../../helpers/http-helpers';
 import { MissingParamError, InvalidParamError } from '../../response-handler';
 
-export class GetEmailController implements Controller {
+export class EmailHandlerController implements Controller {
   private readonly emailValidator: EmailValidator;
   private readonly emailSender: EmailSender;
 
