@@ -28,7 +28,7 @@ const makeEmailValidator = (): EmailValidator => {
 const makeEmailSender = (): EmailSender => {
   class EmailSenderStub implements EmailSender {
     async send(message: EmailSenderParams): Promise<boolean> {
-      return true;
+      return new Promise((resolve) => resolve(true));
     }
   }
 
@@ -50,7 +50,7 @@ const makeSut = (): SutTypes => {
 };
 
 describe('Get Email from Client', () => {
-  test('Should return 400 if no email is provided', () => {
+  test('Should return 400 if no email is provided', async () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: {
@@ -58,11 +58,11 @@ describe('Get Email from Client', () => {
         message: 'any_message',
       },
     };
-    const httpResponse = sut.handle(httpRequest);
+    const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(badRequest(new MissingParamError('email')));
   });
 
-  test('Should return 400 if no subject is provided', () => {
+  test('Should return 400 if no subject is provided', async () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: {
@@ -70,11 +70,11 @@ describe('Get Email from Client', () => {
         message: 'any_message',
       },
     };
-    const httpResponse = sut.handle(httpRequest);
+    const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(badRequest(new MissingParamError('subject')));
   });
 
-  test('Should return 400 if no message is provided', () => {
+  test('Should return 400 if no message is provided', async () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: {
@@ -82,11 +82,11 @@ describe('Get Email from Client', () => {
         subject: 'any_subject',
       },
     };
-    const httpResponse = sut.handle(httpRequest);
+    const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(badRequest(new MissingParamError('message')));
   });
 
-  test('Should return 400 if invalid email is provided', () => {
+  test('Should return 400 if invalid email is provided', async () => {
     const { sut, emailValidatorStub } = makeSut();
     jest.spyOn(emailValidatorStub, 'isValid').mockReturnValueOnce(false);
     const httpRequest = {
@@ -96,7 +96,7 @@ describe('Get Email from Client', () => {
         message: 'any_message',
       },
     };
-    const httpResponse = sut.handle(httpRequest);
+    const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(badRequest(new InvalidParamError('email')));
   });
 
@@ -108,23 +108,37 @@ describe('Get Email from Client', () => {
     expect(emailSpy).toHaveBeenCalledWith('any_email@mail.com');
   });
 
-  test('Should throw if EmailValidator throws', () => {
+  test('Should throw if EmailValidator throws', async () => {
     const { sut, emailValidatorStub } = makeSut();
     jest.spyOn(emailValidatorStub, 'isValid').mockImplementation(() => {
       throw new Error();
     });
     const httpRequest = makeFakeRequest();
-    const httpResponse = sut.handle(httpRequest);
+    const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(serverError());
   });
 
-  test('Should throw if EmailSender throws', () => {
+  test('Should return 500 if EmailSender returns false', async () => {
+    const { sut, emailSenderStub } = makeSut();
+    jest.spyOn(emailSenderStub, 'send').mockImplementation(async () => new Promise((resolve) => resolve(false)));
+    const httpRequest = {
+      body: {
+        email: 'any_email@mail.com',
+        subject: 'any_subject',
+        message: 'any_message',
+      },
+    };
+    const httpResponse = await sut.handle(httpRequest);
+    expect(httpResponse).toEqual(serverError());
+  });
+
+  test('Should throw if EmailSender throws', async () => {
     const { sut, emailSenderStub } = makeSut();
     jest.spyOn(emailSenderStub, 'send').mockImplementation(() => {
       throw new Error();
     });
     const httpRequest = makeFakeRequest();
-    const httpResponse = sut.handle(httpRequest);
+    const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(serverError());
   });
 
@@ -140,10 +154,10 @@ describe('Get Email from Client', () => {
     });
   });
 
-  test('Should return 200 if correct params are provided', () => {
+  test('Should return 200 if correct params are provided', async () => {
     const { sut } = makeSut();
     const httpRequest = makeFakeRequest();
-    const httpResponse = sut.handle(httpRequest);
+    const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(ok());
   });
 });
