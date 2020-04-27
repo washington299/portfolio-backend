@@ -2,8 +2,9 @@ import nodemailer from 'nodemailer';
 import { EmailSenderParams, EmailSender } from '../protocols';
 
 export class EmailSenderAdapter implements EmailSender {
-  async send(message: EmailSenderParams): Promise<boolean> {
+  async send(msg: EmailSenderParams): Promise<boolean> {
     try {
+      const { email, subject, message } = msg;
       const transporter = nodemailer.createTransport({
         host: 'smtp.mailtrap.io',
         port: 2525,
@@ -14,11 +15,14 @@ export class EmailSenderAdapter implements EmailSender {
       });
 
       await transporter.sendMail({
-        from: '"Fred Foo 👻" <foo@example.com>',
-        to: 'bar@example.com, baz@example.com',
-        subject: 'Hello ✔',
-        text: 'Hello world?',
-        html: '<b>Hello world?</b>',
+        from: `<${email}>`,
+        to: 'washingtoncampos9@gmail.com',
+        subject,
+        text: message,
+        html: `
+          <h2>${subject}</h2>
+          <p>${message}</p>
+        `,
       });
 
       return true;
