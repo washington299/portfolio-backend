@@ -6,20 +6,19 @@ export class EmailSenderAdapter implements EmailSender {
     try {
       const { email, subject, message } = msg;
       const transporter = nodemailer.createTransport({
-        host: 'smtp.mailtrap.io',
-        port: 2525,
+        service: 'Gmail',
         auth: {
-          user: '588b96b2345445',
-          pass: '8cfc73c5ff3387',
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
         },
       });
 
       await transporter.sendMail({
-        from: `<${email}>`,
-        to: 'washingtoncampos9@gmail.com',
+        to: process.env.EMAIL_DESTINATION,
         subject,
         text: message,
         html: `
+          <div style="text-align: center">${email}</div>
           <h2>${subject}</h2>
           <p>${message}</p>
         `,
