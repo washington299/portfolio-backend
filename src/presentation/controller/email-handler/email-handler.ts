@@ -29,7 +29,7 @@ export class EmailHandlerController implements Controller {
         return badRequest(new InvalidParamError('email'));
       }
 
-      const emailSent = await this.emailSender.send({
+      const emailSent = this.emailSender.send({
         email, subject, message,
       });
       if (!emailSent) {

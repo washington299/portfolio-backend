@@ -27,8 +27,8 @@ const makeEmailValidator = (): EmailValidator => {
 
 const makeEmailSender = (): EmailSender => {
   class EmailSenderStub implements EmailSender {
-    async send(message: EmailSenderParams): Promise<boolean> {
-      return new Promise((resolve) => resolve(true));
+    send(message: EmailSenderParams): boolean {
+      return true;
     }
   }
 
@@ -120,7 +120,7 @@ describe('Get Email from Client', () => {
 
   test('Should return 500 if EmailSender returns false', async () => {
     const { sut, emailSenderStub } = makeSut();
-    jest.spyOn(emailSenderStub, 'send').mockImplementation(async () => new Promise((resolve) => resolve(false)));
+    jest.spyOn(emailSenderStub, 'send').mockReturnValueOnce(false);
     const httpRequest = {
       body: {
         email: 'any_email@mail.com',

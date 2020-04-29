@@ -1,32 +1,39 @@
 import nodemailer from 'nodemailer';
+import mg from 'nodemailer-mailgun-transport';
 import { EmailSenderParams, EmailSender } from '../protocols';
 
 export class EmailSenderAdapter implements EmailSender {
-  async send(msg: EmailSenderParams): Promise<boolean> {
+  send(msg: EmailSenderParams): boolean {
     try {
       const { email, subject, message } = msg;
-      const transporter = nodemailer.createTransport({
-        service: 'Gmail',
+      const auth = {
         auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
+          api_key: `${process.env.EMAIL_API_KEY}`,
+          domain: `${process.env.EMAIL_API_URL}`,
         },
-      });
+      };
 
-      await transporter.sendMail({
+      const transporter = nodemailer.createTransport(mg(auth));
+
+      const mailConfig = {
+        from: email,
         to: process.env.EMAIL_DESTINATION,
         subject,
         text: message,
         html: `
-          <div style="text-align: center">${email}</div>
           <h2>${subject}</h2>
-          <p>${message}</p>
-        `,
+          <p>Hi, washington! ${message}</p>
+          `,
+      };
+
+      transporter.sendMail(mailConfig, (err) => {
+        if (err) {
+          console.log(err);
+        }
       });
 
       return true;
     } catch (error) {
-      console.log(error);
       return false;
     }
   }

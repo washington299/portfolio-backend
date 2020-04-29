@@ -5,5 +5,5 @@ export interface EmailSenderParams {
 }
 
 export interface EmailSender {
-  send(message: EmailSenderParams): Promise<boolean>;
+  send(message: EmailSenderParams): boolean;
 }
