@@ -41,7 +41,7 @@
     "express": "^4.17.1",
     "fast-glob": "^3.2.2",
     "nodemailer": "^6.4.6",
-    "nodemailer-mailgun-transport": "^2.0.0",
+    "nodemailer-mailgun-transport": "^2.1.5",
     "supertest": "^4.0.2",
     "validator": "^13.0.0"
   }
